@@ -21,7 +21,7 @@ namespace SlsrAdm {
         }
 
         /**
-         * Process.
+         * Processing.
          *
          * @param string $uri Requested URI.
          * @param array $request User request.
@@ -29,8 +29,31 @@ namespace SlsrAdm {
          * @return Response Instance of Response.
          */
         public function process(string $uri, array $request, array $files) {
-            $request = new Request($uri, $request, $files);
-            return new Response(200, 'Test.');
+            return $this->route(
+                new Request($uri, $request, $files)
+            );
+        }
+
+        /**
+         * Routing.
+         *
+         * @param Request $request Request instance.
+         * @return Response Response instance.
+         */
+        public function route(Request $request) {
+            $url = parse_url($request->getURI(), PHP_URL_PATH);
+            if (!empty($url)) {
+                list($controller, $action) = explode('/', trim($url, '/'));
+                $controller = __NAMESPACE__.'\\'.$controller;
+                if (method_exists($controller, $action)) {
+                    $reflection = new \ReflectionMethod($controller, $action);
+                    foreach ($reflection->getParameters() as $argument) {
+                        $parameters[] = $request->getParameter($argument->getName(), null);
+                    }
+                    return call_user_func_array([$controller, $action], $parameters);
+                }
+            }
+            return new Response(404, 'Not found.');
         }
     }
 }

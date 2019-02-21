@@ -7,6 +7,11 @@ namespace SlsrAdm {
      */
     class Request {
         /**
+         * @var string URI.
+         */
+        protected $uri;
+
+        /**
          * @var array Parameters.
          */
         protected $parameters = [];
@@ -17,11 +22,6 @@ namespace SlsrAdm {
         protected $files = [];
 
         /**
-         * @var array Route.
-         */
-        protected $route = [];
-
-        /**
          * Class constructor.
          *
          * @param string $uri Requested URI.
@@ -29,18 +29,18 @@ namespace SlsrAdm {
          * @param array $files User files.
          */
         public function __construct(string $uri, array $request, array $files) {
-            $this->route = $this->parseRoute($uri);
+            $this->uri = $this->filter($uri);
             $this->parameters = $this->filterArray($request);
             $this->files = $files;
         }
 
         /**
-         * Get route.
+         * Get URI.
          *
-         * @return array Route.
+         * @return string URI.
          */
-        public function getRoute() {
-            return $this->route;
+        public function getURI() {
+            return $this->uri;
         }
 
         /**
@@ -70,21 +70,6 @@ namespace SlsrAdm {
                 return [];
             }
             return $value;
-        }
-
-        /**
-         * Parse route.
-         *
-         * @param string $uri URI.
-         * @return array Route.
-         */
-        protected function parseRoute(string $uri) {
-            $url = explode('/', explode('?', explode('#', $uri)[0])[0]);
-            array_shift($url);
-            if (empty($url)) {
-                return [];
-            }
-            return $url;
         }
 
         /**
