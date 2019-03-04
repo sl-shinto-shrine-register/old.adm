@@ -1,7 +1,6 @@
 <?php
 // Constants.
 define('REQUIRED_PHP_VERSION', '7.0.0');
-define('APPLICATION_NAMESPACE', 'SlsrAdm');
 
 // Error reporting.
 error_reporting(E_ALL);
