@@ -7,7 +7,7 @@ namespace SlsrAdm {
      */
     class Application {
         /**
-         * @var Configuration Configuration instance.
+         * @var \SlsrAdm\Models\Configuration Configuration instance.
          */
         protected $configuration = null;
 
@@ -17,7 +17,7 @@ namespace SlsrAdm {
          * @param string $configurationFile Configuration file.
          */
         public function __construct(string $configurationFile) {
-            $this->configuration = new Configuration($configurationFile);
+            $this->configuration = new Models\Configuration($configurationFile);
         }
 
         /**
@@ -26,25 +26,25 @@ namespace SlsrAdm {
          * @param string $uri Requested URI.
          * @param array $request User request.
          * @param array $files User files.
-         * @return Response Instance of Response.
+         * @return \SlsrAdm\Models\Response Instance of Response.
          */
         public function process(string $uri, array $request, array $files) {
             return $this->route(
-                new Request($uri, $request, $files)
+                new Models\Request($uri, $request, $files)
             );
         }
 
         /**
          * Routing.
          *
-         * @param Request $request Request instance.
-         * @return Response Response instance.
+         * @param \SlsrAdm\Models\Request $request Request instance.
+         * @return \SlsrAdm\Models\Response Response instance.
          */
-        public function route(Request $request) {
+        public function route(Models\Request $request) {
             $url = parse_url($request->getURI(), PHP_URL_PATH);
             if (!empty($url)) {
                 list($controller, $action) = explode('/', trim($url, '/'));
-                $controller = __NAMESPACE__.'\\'.$controller;
+                $controller = __NAMESPACE__.'\\Controller\\'.$controller;
                 if (method_exists($controller, $action)) {
                     $reflection = new \ReflectionMethod($controller, $action);
                     foreach ($reflection->getParameters() as $argument) {
@@ -53,7 +53,7 @@ namespace SlsrAdm {
                     return call_user_func_array([$controller, $action], $parameters);
                 }
             }
-            return new Response(404, 'Not found.');
+            return new Models\Response(404, 'Not found.');
         }
     }
 }

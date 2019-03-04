@@ -1,5 +1,5 @@
 <?php
-namespace SlsrAdm {
+namespace SlsrAdm\Models {
     /**
      * Configuration class.
      *

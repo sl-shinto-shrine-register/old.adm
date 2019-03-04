@@ -23,5 +23,8 @@ foreach (scandir(__DIR__) as $entry) {
     }
 }
 spl_autoload_register(function (string $className) {
-    spl_autoload(str_replace(APPLICATION_NAMESPACE.'\\', '', $className));
+    if (strpos($className, '\\') !== false) {
+        $className = substr(strrchr($className, '\\'), 1);
+    }
+    spl_autoload($className);
 }, true, false);
